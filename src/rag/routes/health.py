@@ -1,3 +1,6 @@
+# Copyright 2026 Muhammad Nizwa
+# SPDX-License-Identifier: MIT
+
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 

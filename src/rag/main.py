@@ -11,6 +11,8 @@ from fastapi import FastAPI
 from rag import __version__
 from rag.config import get_settings
 
+from rag.routes.health import router as health_router
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,14 +31,14 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 def create_app() -> FastAPI:
-    config = get_settings()
+    settings = get_settings()
 
     app = FastAPI(
-        title=config.app_name,
-        summary=config.app_summary,
+        title=settings.app_name,
+        summary=settings.app_summary,
         # description=...,
         version=__version__,
-        debug=config.debug,
+        debug=settings.debug,
         # docs_url=...,
         # redoc_url=...,
         # openapi_url=...,
@@ -47,6 +49,8 @@ def create_app() -> FastAPI:
         # servers=...,
         lifespan=lifespan,
     )
+
+    app.include_router(router=health_router, prefix=settings.api_prefix)
 
     return app
 
