@@ -10,6 +10,8 @@ from fastapi import FastAPI
 
 from rag import __version__
 from rag.config import get_settings
+from rag.db.config import create_database
+from rag.service.s3 import create_s3_storage
 
 from rag.routes.health import router as health_router
 
@@ -18,15 +20,30 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    config = get_settings()
+    settings = get_settings()
 
-    app.state.config = config
+    app.state.settings = settings
+
+    # init database
+    database = create_database(settings)
+    database.startup()
+    app.state.database = database
+
+    # init storage
+    s3_storage = create_s3_storage(settings)
+    s3_storage.ensure_bucket_exists()
+    app.state.s3_storage = s3_storage
 
     logger.info("Application startup completed")
 
     try:
         yield
+
     finally:
+        # shutdown phase
+        database.shutdown()
+        s3_storage.close()
+
         logger.info("Application shutdown completed")
 
 
