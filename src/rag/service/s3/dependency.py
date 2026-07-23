@@ -3,14 +3,14 @@
 
 from fastapi import Request
 
-from rag.service.s3.interface import BaseStorage
+from rag.service.s3.interface import StorageProvider
 
 
-def get_s3_storage(request: Request) -> BaseStorage:
+def get_s3_storage(request: Request) -> StorageProvider:
     """
     FastAPI dependency for object storage
     """
-    storage: BaseStorage | None = getattr(request.app.state, "s3_storage", None)
+    storage: StorageProvider | None = getattr(request.app.state, "s3_storage", None)
 
     if storage is None:
         raise RuntimeError("S3 storage is not initialized on app.state")

@@ -6,9 +6,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 
-class BaseStorage(ABC):
+class StorageProvider(ABC):
     """
-    Any object storage providers must inherit the `BaseStorage` class,
+    Any object storage providers must inherit the `StorageProvider` class,
     strictly made due to most service class are dependent to the storage method
     """
 
@@ -19,7 +19,7 @@ class BaseStorage(ABC):
         """
 
     # def check_connection(self) -> tuple[bool, str]:
-    #     """ 
+    #     """
     #     check client connection and bucket existence
     #     """
     #     ...

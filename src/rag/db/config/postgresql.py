@@ -10,13 +10,13 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker, Session
 
-from rag.db.config.interface import BaseDatabase
+from rag.db.config.interface import DatabaseProvider
 from rag.config import PostgresSettings
 
 logger = logging.getLogger(__name__)
 
 
-class PostgreSQLDatabase(BaseDatabase):
+class PostgreSQLDatabase(DatabaseProvider):
     """
     PostgreSQL db provider implementation
     """

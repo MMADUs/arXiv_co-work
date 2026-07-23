@@ -11,12 +11,12 @@ from botocore.config import Config
 from botocore.exceptions import ClientError
 
 from rag.config import S3Settings
-from rag.service.s3.interface import BaseStorage
+from rag.service.s3.interface import StorageProvider
 
 logger = logging.getLogger(__name__)
 
 
-class S3Storage(BaseStorage):
+class S3Storage(StorageProvider):
     """
     S3 Object Storage interface
     """

@@ -7,9 +7,9 @@ from contextlib import AbstractContextManager
 from sqlalchemy.orm import Session
 
 
-class BaseDatabase(ABC):
+class DatabaseProvider(ABC):
     """
-    Any database provider must inherit the BaseDatabase
+    Any database provider must inherit the `DatabaseProvider`
     strictly made for concrete lifecycle and session boundary
     """
 
