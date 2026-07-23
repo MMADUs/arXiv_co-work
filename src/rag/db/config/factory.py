@@ -9,4 +9,4 @@ from rag.db.config.postgresql import PostgreSQLDatabase
 def create_database(settings: AppSettings | None = None) -> BaseDatabase:
     settings = settings or get_settings()
 
-    return PostgreSQLDatabase(settings.postgres)
+    return PostgreSQLDatabase(settings.postgres_settings)

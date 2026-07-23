@@ -20,7 +20,7 @@ if config.config_file_name is not None:
 settings = get_settings()
 
 # set sql alchemy db url
-config.set_main_option("sqlalchemy.url", settings.postgres.db_url)
+config.set_main_option("sqlalchemy.url", settings.postgres_settings.db_url)
 
 # metadata is the collection of SQLAlchemy tables from all models
 # any class inherited from the `Base` itself
