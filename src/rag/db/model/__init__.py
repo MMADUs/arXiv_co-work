@@ -7,10 +7,18 @@ from rag.db.model.paper_model import (
     PaperParserStatus,
     PaperIndexingStatus,
 )
+from rag.db.model.chunk_model import (
+    ChunkModel,
+    ChunkIndexingStatus,
+    ChunkEmbeddingStatus,
+)
 
 __all__ = [
     "PaperModel",
     "PaperIngestionStatus",
     "PaperParserStatus",
     "PaperIndexingStatus",
+    "ChunkModel",
+    "ChunkIndexingStatus",
+    "ChunkEmbeddingStatus",
 ]
