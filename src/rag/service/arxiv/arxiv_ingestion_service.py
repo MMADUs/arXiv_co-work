@@ -1,0 +1,84 @@
+# Copyright 2026 Muhammad Nizwa
+# SPDX-License-Identifier: MIT
+
+import logging
+from dataclasses import dataclass
+
+from sqlalchemy.orm import Session
+
+from rag.config import get_settings
+from rag.db.repository import PaperRepository
+from rag.schema.arxiv_schema import ArxivQueryParams
+from rag.service.arxiv.arxiv_client import ArxivClient
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass(slots=True)
+class ArxivIngestionResult:
+    query: ArxivQueryParams
+    papers_fetched: int
+    papers_stored: int
+    arxiv_ids: list[str]
+    errors: list[str]
+
+
+class ArxivIngestionService:
+    """
+    `ArxivIngestionService` fetches paper metadata and store them into database,
+    through `ingest_metadata()` method.
+    """
+
+    def __init__(self, session: Session) -> None:
+        self.settings = get_settings()
+        self.session = session
+        self.arxiv_client = ArxivClient(self.settings.arxiv_settings)
+        self.paper_repository = PaperRepository(session)
+
+    async def ingest_metadata(self, query: ArxivQueryParams) -> ArxivIngestionResult:
+        try:
+            logger.info("Starting arXiv client metadata ingestion")
+
+            papers_metadata = await self.arxiv_client.fetch_papers(query)
+
+            if not papers_metadata:
+                logger.info("No arXiv papers matched query: %s", query.model_dump())
+
+                return ArxivIngestionResult(
+                    query=query,
+                    papers_fetched=0,
+                    papers_stored=0,
+                    arxiv_ids=[],
+                    errors=[],
+                )
+
+            logger.info("Storing arXiv metadata: count=%d", len(papers_metadata))
+
+            stored_papers = self.paper_repository.upsert_many_from_arxiv(
+                papers=papers_metadata
+            )
+            self.session.commit()
+
+            logger.info(
+                "Finished arXiv metadata ingestion: stored=%d", len(stored_papers)
+            )
+
+            return ArxivIngestionResult(
+                query=query,
+                papers_fetched=len(papers_metadata),
+                papers_stored=len(stored_papers),
+                arxiv_ids=[p.arxiv_id for p in papers_metadata],
+                errors=[],
+            )
+
+        except Exception as error:
+            self.session.rollback()
+            logger.exception("Failed arXiv metadata ingestion: %s", error)
+
+            return ArxivIngestionResult(
+                query=query,
+                papers_fetched=0,
+                papers_stored=0,
+                arxiv_ids=[],
+                errors=[str(error)],
+            )

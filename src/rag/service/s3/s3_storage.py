@@ -67,6 +67,7 @@ class S3Storage(StorageProvider):
 
     def close(self) -> None:
         self.client.close()
+        logger.info("S3 client connection closed")
 
     def upload_file(self, local_path: Path, object_key: str) -> None:
         self.ensure_bucket_exists()

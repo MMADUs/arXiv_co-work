@@ -79,51 +79,51 @@ class ChunkRepository:
             source_storage_key=source_object_key,
         )
 
-    # def list_pending_embeddings(
-    #     self,
-    #     paper_id: UUID | None = None,
-    #     limit: int = 50,
-    #     include_failed: bool = False,
-    # ) -> list[ChunkModel]:
-    #     statuses = [ChunkEmbeddingStatus.PENDING]
+    def list_pending_embeddings(
+        self,
+        paper_id: UUID | None = None,
+        limit: int = 50,
+        include_failed: bool = False,
+    ) -> list[ChunkModel]:
+        statuses = [ChunkEmbeddingStatus.PENDING]
 
-    #     if include_failed:
-    #         statuses.append(ChunkEmbeddingStatus.FAILED)
+        if include_failed:
+            statuses.append(ChunkEmbeddingStatus.FAILED)
 
-    #     statement = (
-    #         select(ChunkModel)
-    #         .where(ChunkModel.embedding_status.in_(statuses))
-    #         .order_by(ChunkModel.created_at.asc(), ChunkModel.chunk_index.asc())
-    #         .limit(limit)
-    #     )
+        statement = (
+            select(ChunkModel)
+            .where(ChunkModel.embedding_status.in_(statuses))
+            .order_by(ChunkModel.created_at.asc(), ChunkModel.chunk_index.asc())
+            .limit(limit)
+        )
 
-    #     if paper_id is not None:
-    #         statement = statement.where(ChunkModel.paper_id == paper_id)
+        if paper_id is not None:
+            statement = statement.where(ChunkModel.paper_id == paper_id)
 
-    #     return list(self.session.scalars(statement))
+        return list(self.session.scalars(statement))
 
-    # def list_pending_indexing(
-    #     self,
-    #     paper_id: UUID | None = None,
-    #     limit: int = 50,
-    #     include_failed: bool = False,
-    # ) -> list[ChunkModel]:
-    #     statuses = [ChunkIndexingStatus.PENDING]
+    def list_pending_indexing(
+        self,
+        paper_id: UUID | None = None,
+        limit: int = 50,
+        include_failed: bool = False,
+    ) -> list[ChunkModel]:
+        statuses = [ChunkIndexingStatus.PENDING]
 
-    #     if include_failed:
-    #         statuses.append(ChunkIndexingStatus.FAILED)
+        if include_failed:
+            statuses.append(ChunkIndexingStatus.FAILED)
 
-    #     statement = (
-    #         select(ChunkModel)
-    #         .where(ChunkModel.indexing_status.in_(statuses))
-    #         .order_by(ChunkModel.created_at.asc(), ChunkModel.chunk_index.asc())
-    #         .limit(limit)
-    #     )
+        statement = (
+            select(ChunkModel)
+            .where(ChunkModel.indexing_status.in_(statuses))
+            .order_by(ChunkModel.created_at.asc(), ChunkModel.chunk_index.asc())
+            .limit(limit)
+        )
 
-    #     if paper_id is not None:
-    #         statement = statement.where(ChunkModel.paper_id == paper_id)
+        if paper_id is not None:
+            statement = statement.where(ChunkModel.paper_id == paper_id)
 
-    #     return list(self.session.scalars(statement))
+        return list(self.session.scalars(statement))
 
     # def get_indexing_stats(self) -> dict[str, int | float | datetime | None]:
     #     total_chunks = self.session.scalar(select(func.count(ChunkModel.id))) or 0
